@@ -71,9 +71,7 @@ def test_pagination_follows_link_header():
         if "page_info" in request.url.params:
             return httpx.Response(200, json={"items": [3, 4]})
         nxt = "https://api.test/list?page_info=abc"
-        return httpx.Response(
-            200, json={"items": [1, 2]}, headers={"Link": f'<{nxt}>; rel="next"'}
-        )
+        return httpx.Response(200, json={"items": [1, 2]}, headers={"Link": f'<{nxt}>; rel="next"'})
 
     async def run():
         async with make_client(handler) as api:

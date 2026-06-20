@@ -1,5 +1,9 @@
 # async-api-client
 
+[![CI](https://github.com/Musyg/async-api-client/actions/workflows/ci.yml/badge.svg)](https://github.com/Musyg/async-api-client/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
+
 A small, resilient async REST client. It wraps `httpx.AsyncClient` with the
 three things every real-world API integration ends up needing:
 

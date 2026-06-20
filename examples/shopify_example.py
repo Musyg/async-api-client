@@ -14,7 +14,8 @@ Link header, typed accessors. This is illustrative, not a full SDK.
 
 from __future__ import annotations
 
-from typing import Any, AsyncGenerator, Dict, List
+from collections.abc import AsyncGenerator
+from typing import Any
 
 from async_api_client import AsyncAPIClient, AsyncTokenBucket, RetryPolicy
 
@@ -35,16 +36,16 @@ class ShopifyClient(AsyncAPIClient):
             retry=RetryPolicy(max_retries=4, base_delay=1.0),
         )
 
-    async def get_products(self, limit: int = 50, status: str = "active") -> List[Dict[str, Any]]:
+    async def get_products(self, limit: int = 50, status: str = "active") -> list[dict[str, Any]]:
         data = await self.get_json("products.json", params={"limit": min(limit, 250), "status": status})
         return data.get("products", [])
 
-    async def iter_orders(self, status: str = "any") -> AsyncGenerator[Dict[str, Any], None]:
+    async def iter_orders(self, status: str = "any") -> AsyncGenerator[dict[str, Any], None]:
         async for order in self.paginate(
             "orders.json", items_key="orders", params={"status": status, "limit": 250}
         ):
             yield order
 
-    async def create_product(self, product: Dict[str, Any]) -> Dict[str, Any]:
+    async def create_product(self, product: dict[str, Any]) -> dict[str, Any]:
         data = await self.post_json("products.json", json={"product": product})
         return data.get("product", {})

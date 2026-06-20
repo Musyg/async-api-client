@@ -20,7 +20,8 @@ Wraps httpx.AsyncClient with:
 from __future__ import annotations
 
 import logging
-from typing import Any, AsyncGenerator, Dict, Optional
+from collections.abc import AsyncGenerator
+from typing import Any
 
 import httpx
 
@@ -35,7 +36,7 @@ __all__ = ["AsyncAPIClient", "APIError"]
 class APIError(Exception):
     """Raised when a request ultimately fails after retries."""
 
-    def __init__(self, message: str, status_code: Optional[int] = None):
+    def __init__(self, message: str, status_code: int | None = None):
         self.status_code = status_code
         super().__init__(message)
 
@@ -46,11 +47,11 @@ class AsyncAPIClient:
     def __init__(
         self,
         base_url: str,
-        headers: Optional[Dict[str, str]] = None,
+        headers: dict[str, str] | None = None,
         timeout: float = 30.0,
-        rate_limiter: Optional[AsyncTokenBucket] = None,
-        retry: Optional[RetryPolicy] = None,
-        transport: Optional[httpx.AsyncBaseTransport] = None,
+        rate_limiter: AsyncTokenBucket | None = None,
+        retry: RetryPolicy | None = None,
+        transport: httpx.AsyncBaseTransport | None = None,
     ):
         self.base_url = base_url.rstrip("/")
         self.headers = headers or {}
@@ -58,9 +59,9 @@ class AsyncAPIClient:
         self.rate_limiter = rate_limiter
         self.retry = retry or RetryPolicy()
         self._transport = transport
-        self._client: Optional[httpx.AsyncClient] = None
+        self._client: httpx.AsyncClient | None = None
 
-    async def __aenter__(self) -> "AsyncAPIClient":
+    async def __aenter__(self) -> AsyncAPIClient:
         await self._ensure_client()
         return self
 
@@ -89,7 +90,7 @@ class AsyncAPIClient:
         """
         await self._ensure_client()
         assert self._client is not None
-        last_exc: Optional[Exception] = None
+        last_exc: Exception | None = None
 
         for attempt in range(self.retry.max_retries + 1):
             if self.rate_limiter:
@@ -120,27 +121,27 @@ class AsyncAPIClient:
 
         raise APIError(f"request failed after retries: {last_exc}")
 
-    async def get_json(self, path: str, params: Optional[Dict] = None) -> Any:
+    async def get_json(self, path: str, params: dict | None = None) -> Any:
         r = await self.request("GET", path, params=params)
         return r.json() if r.text else {}
 
-    async def post_json(self, path: str, json: Optional[Dict] = None, params: Optional[Dict] = None) -> Any:
+    async def post_json(self, path: str, json: dict | None = None, params: dict | None = None) -> Any:
         r = await self.request("POST", path, json=json, params=params)
         return r.json() if r.text else {}
 
-    async def put_json(self, path: str, json: Optional[Dict] = None, params: Optional[Dict] = None) -> Any:
+    async def put_json(self, path: str, json: dict | None = None, params: dict | None = None) -> Any:
         r = await self.request("PUT", path, json=json, params=params)
         return r.json() if r.text else {}
 
-    async def delete(self, path: str, params: Optional[Dict] = None) -> bool:
+    async def delete(self, path: str, params: dict | None = None) -> bool:
         r = await self.request("DELETE", path, params=params)
         return r.status_code < 400
 
     async def paginate(
         self,
         path: str,
-        items_key: Optional[str] = None,
-        params: Optional[Dict] = None,
+        items_key: str | None = None,
+        params: dict | None = None,
     ) -> AsyncGenerator[Any, None]:
         """
         Iterate a paginated endpoint following RFC 5988 `Link: rel="next"`
@@ -149,7 +150,7 @@ class AsyncAPIClient:
         """
         await self._ensure_client()
         assert self._client is not None
-        next_url: Optional[str] = path
+        next_url: str | None = path
         page_params = dict(params or {})
 
         while next_url:
