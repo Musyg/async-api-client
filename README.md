@@ -22,8 +22,12 @@ Subclass `AsyncAPIClient` to build a typed wrapper for any API.
 
 ## Install
 
+This project is not currently published on PyPI. The `async-api-client` name on
+PyPI belongs to an unrelated project, so install this implementation explicitly
+from its GitHub repository:
+
 ```bash
-pip install async-api-client
+python -m pip install "git+https://github.com/Musyg/async-api-client.git"
 ```
 
 ## Usage
@@ -34,7 +38,7 @@ from async_api_client import AsyncAPIClient, AsyncTokenBucket, RetryPolicy
 async with AsyncAPIClient(
     base_url="https://api.example.com",
     headers={"Authorization": "Bearer ..."},
-    rate_limiter=AsyncTokenBucket(rate=2, capacity=4),   # 2 req/s, burst 4
+    rate_limiter=AsyncTokenBucket(rate=2, capacity=4),  # 2 req/s, burst 4
     retry=RetryPolicy(max_retries=4, base_delay=1.0),
 ) as api:
     order = await api.get_json("/v1/orders/42")
@@ -70,7 +74,9 @@ class ShopifyClient(AsyncAPIClient):
 ## Tests
 
 ```bash
-pip install "async-api-client[dev]"
+git clone https://github.com/Musyg/async-api-client.git
+cd async-api-client
+python -m pip install -e ".[dev]"
 pytest
 ```
 
