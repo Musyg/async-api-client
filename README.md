@@ -22,8 +22,12 @@ Subclass `AsyncAPIClient` to build a typed wrapper for any API.
 
 ## Install
 
+This project is not currently published on PyPI. The `async-api-client` name on
+PyPI belongs to an unrelated project, so install this implementation explicitly
+from its GitHub repository:
+
 ```bash
-pip install async-api-client
+python -m pip install "git+https://github.com/Musyg/async-api-client.git"
 ```
 
 ## Usage
@@ -70,7 +74,9 @@ class ShopifyClient(AsyncAPIClient):
 ## Tests
 
 ```bash
-pip install "async-api-client[dev]"
+git clone https://github.com/Musyg/async-api-client.git
+cd async-api-client
+python -m pip install -e ".[dev]"
 pytest
 ```
 
