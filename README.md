@@ -38,7 +38,7 @@ from async_api_client import AsyncAPIClient, AsyncTokenBucket, RetryPolicy
 async with AsyncAPIClient(
     base_url="https://api.example.com",
     headers={"Authorization": "Bearer ..."},
-    rate_limiter=AsyncTokenBucket(rate=2, capacity=4),   # 2 req/s, burst 4
+    rate_limiter=AsyncTokenBucket(rate=2, capacity=4),  # 2 req/s, burst 4
     retry=RetryPolicy(max_retries=4, base_delay=1.0),
 ) as api:
     order = await api.get_json("/v1/orders/42")
